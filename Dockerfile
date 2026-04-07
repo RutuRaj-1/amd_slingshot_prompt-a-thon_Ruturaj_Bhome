@@ -1,16 +1,16 @@
-# Step 1: Build the React App
-FROM node:18-alpine as build
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-# Use 'npm run build' for Create React App or Vite
-RUN npm run build 
+FROM node:18-alpine
 
-# Step 2: Serve the app with Nginx
-FROM nginx:alpine
-# Copy the build output to replace the default nginx contents.
-# NOTE: If you use Vite, change /build to /dist
-COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+WORKDIR /app
+
+# Copy correct package.json from nested folder
+COPY prompt-a-thon/food-coach/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy full app
+COPY prompt-a-thon/food-coach/ .
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev"]
